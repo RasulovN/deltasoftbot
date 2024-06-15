@@ -104,7 +104,7 @@ bot.on('callback_query', async(callbackQuery) => {
     
        try {
      // Userlarni topish
-          let user = await User.findOne({chatId}).lean();
+          let user = await User.find({chatId}).lean();
 
           // Agar foydalanuvchi topilgan bo'lsa, uning ma'lumotlarini yangilash
           if (user) {
@@ -2980,5 +2980,5 @@ Contact us and our team will help you find the best solution for your business."
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`2Server is running on port ${PORT}`);
 });
