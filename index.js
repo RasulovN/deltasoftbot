@@ -102,35 +102,34 @@ bot.on('callback_query', async(callbackQuery) => {
       const name = msg.chat.first_name;
       const phoneNumber = msg.contact.phone_number;
     
-      try {
-        // Userlarni topish
-        let users = await User.find({ phoneNumber }).lean();
-        // Agar birinchi foydalanuvchi topilgan bo'lsa, uning ma'lumotlarini yangilash
-        if (users.length > 0) {
-          await User.findByIdAndUpdate(
-            users[0]._id,
-            { name, phoneNumber, isActive: true },
-            { new: true }
-          );
-        } else {
-          // Agar foydalanuvchi topilmagan bo'lsa, yangi foydalanuvchi qo'shish
-          const newUser = new User({
-            name: msg.from.first_name,
-            chatId,
-            phoneNumber,
-            admin: false,
-            status: true,
-            isActive: true,
-            createdAt: new Date(),
-            // action: 'request_contact'
+       try {
+     // Userlarni topish
+          let user = await User.findOne({chatId}).lean();
+
+          // Agar foydalanuvchi topilgan bo'lsa, uning ma'lumotlarini yangilash
+          if (user) {
+            await User.findByIdAndUpdate(
+              user._id,
+              { name, phoneNumber, isActive: true, chatId }, // chatId ni ham yangilaymiz
+              { new: true }
+            );
+          } else {
+            // Agar foydalanuvchi topilmagan bo'lsa, yangi foydalanuvchi qo'shish
+            const newUser = new User({
+              name: msg.from.first_name,
+              chatId, // chatId ni qo'shamiz
+              phoneNumber,
+              admin: false,
+              status: true,
+              isActive: true,
+              createdAt: new Date(),
+              // action: 'request_contact'
+            });
+            await newUser.save();
+          }
+          bot.sendMessage(chatId, "Telefon raqamingiz muvaffaqiyatli saqlandi!", {
+            remove_keyboard: true,
           });
-          await newUser.save();
-          // const newUser = new User({ chatId, name, phoneNumber });
-          // await newUser.save();
-        }
-        bot.sendMessage(chatId, "Telefon raqamingiz muvaffaqiyatli saqlandi!", {
-          remove_keyboard: true,
-        });
     setLang(msg) 
         // Admin va obi-havo foydalanuvchilari uchun alohida funktsiyalarni chaqirish
     //     if (phoneNumber === "+998330033953") {
