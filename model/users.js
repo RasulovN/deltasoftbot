@@ -20,4 +20,4 @@ const UserSchema = new Schema({
     createdAt: Date,
 })
 
-module.exports = model("User", UserSchema)
+module.exports = model("BotUsers", UserSchema)
