@@ -105,7 +105,6 @@ bot.on('callback_query', async(callbackQuery) => {
       try {
      // BotUserslarni topish
           let user = await BotUsers.findOne({chatId}).lean();
-console.log(user);
           // Agar foydalanuvchi topilgan bo'lsa, uning ma'lumotlarini yangilash
           if (user) {
             await BotUsers.findByIdAndUpdate(
