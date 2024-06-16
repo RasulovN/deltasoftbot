@@ -2,7 +2,7 @@ const express = require("express");
 const TelegramBot = require("node-telegram-bot-api");
 const mongoose = require("mongoose");
 const doteenv = require("dotenv");
-const User = require("./model/users.js");
+const BotUsers = require("./model/users.js");
 const Task = require("./model/taskModel");
 
 doteenv.config();
@@ -102,20 +102,20 @@ bot.on('callback_query', async(callbackQuery) => {
       const name = msg.chat.first_name;
       const phoneNumber = msg.contact.phone_number;
     
-       try {
-     // Userlarni topish
-          let user = await User.find({chatId}).lean();
-
+      try {
+     // BotUserslarni topish
+          let user = await BotUsers.findOne({chatId}).lean();
+console.log(user);
           // Agar foydalanuvchi topilgan bo'lsa, uning ma'lumotlarini yangilash
           if (user) {
-            await User.findByIdAndUpdate(
+            await BotUsers.findByIdAndUpdate(
               user._id,
               { name, phoneNumber, isActive: true, chatId }, // chatId ni ham yangilaymiz
               { new: true }
             );
           } else {
             // Agar foydalanuvchi topilmagan bo'lsa, yangi foydalanuvchi qo'shish
-            const newUser = new User({
+            const newBotUsers = new BotUsers({
               name: msg.from.first_name,
               chatId, // chatId ni qo'shamiz
               phoneNumber,
@@ -125,15 +125,16 @@ bot.on('callback_query', async(callbackQuery) => {
               createdAt: new Date(),
               // action: 'request_contact'
             });
-            await newUser.save();
+            await newBotUsers.save();
           }
           bot.sendMessage(chatId, "Telefon raqamingiz muvaffaqiyatli saqlandi!", {
             remove_keyboard: true,
           });
+
     setLang(msg) 
         // Admin va obi-havo foydalanuvchilari uchun alohida funktsiyalarni chaqirish
     //     if (phoneNumber === "+998330033953") {
-    //       await User.findOneAndUpdate(
+    //       await BotUsers.findOneAndUpdate(
     //         { phoneNumber },
     //         { admin: true },
     //         { new: true }
@@ -717,7 +718,7 @@ Biz bilan bog'laning va bizning jamoamiz sizning biznesingiz uchun eng yaxshi ye
     }
     async function userLists(msg) {
       const chatId = msg.chat.id;
-      const users = await User.find();
+      const users = await BotUsers.find();
       users.forEach(async (user) => {
         const uid = "`" + `${user.chatId}` + "`";
         bot.sendMessage(
@@ -730,20 +731,23 @@ Biz bilan bog'laning va bizning jamoamiz sizning biznesingiz uchun eng yaxshi ye
     async function userCount(msg) {
       try {
         const chatId = msg.chat.id;
-        const users = await User.find();
+        const users = await BotUsers.find();
         const tasks = await Task.find();
         const userLength = users.length;
         const taskLength = tasks.length;
     
+        // if(userLength === 0){
+        //   bot.sendMessage(chatId, `Foydalanuvchilar mavjud emas`)
+        // }
         // Botni bloklangan foydalanuvchilarning sonini hisoblash
-        const blockedUsersCount = users.filter(
+        const blockedBotUserssCount = users.filter(
           (user) => user.status === false
         ).length;
     
         // Foydalanuvchilar sonini bir marta chiqarish va bloklangan foydalanuvchilarni bildirish
         bot.sendMessage(
           chatId,
-          `@Grellaparat_zakas_bot uchun statistika: \nFoydalanuvchilar: \nBarcha foydalanuvchilar: ${userLength} \nBot bloklangan: ${blockedUsersCount} \n \nXabarlar: \nBarcha xabarlar: ${taskLength} \n\nBotni bloklagan foydalanuvchilarning hisoblagichi translyatsiya posti yuborilganda yangilanadi.`,
+          `@Grellaparat_zakas_bot uchun statistika: \nFoydalanuvchilar: \nBarcha foydalanuvchilar: ${userLength} \nBot bloklangan: ${blockedBotUserssCount} \n \nXabarlar: \nBarcha xabarlar: ${taskLength} \n\nBotni bloklagan foydalanuvchilarning hisoblagichi translyatsiya posti yuborilganda yangilanadi.`,
           { parse_mode: "Markdown" }
         );
     
@@ -759,7 +763,7 @@ Biz bilan bog'laning va bizning jamoamiz sizning biznesingiz uchun eng yaxshi ye
         const chatId = msg.chat.id;
         const adminId = "5803698389";
         // MongoDB da status true bo'lgan foydalanuvchilarni tanlash
-        const users = await User.find({ status: true });
+        const users = await BotUsers.find({ status: true });
     
         // Foydalanuvchidan xabar matnini so'rash
         await bot.sendMessage(adminId, `Xabar matnini kiriting: `, {
@@ -872,8 +876,8 @@ Biz bilan bog'laning va bizning jamoamiz sizning biznesingiz uchun eng yaxshi ye
     async function adminListTasks(msg) {
       const chatId = msg.chat.id;
     
-      const adminUserId = await User.findOne({ chatId });
-      if (!adminUserId || adminUserId.phoneNumber !== "+998330033953") {
+      const adminBotUsersId = await BotUsers.findOne({ chatId });
+      if (!adminBotUsersId || adminBotUsersId.phoneNumber !== "+998330033953") {
         bot.sendMessage(chatId, "Sizga bunday so'rov mumkin emas!");
         return;
       }
@@ -1652,7 +1656,7 @@ Contact us and our team will help you find the best solution for your business."
           [{ text: "All requests", callback_data: "adminAllLists2" }],
           [
             { text: "List of users", callback_data: "usersList2" },
-            { text: "User statistics", callback_data: "userCount2" },
+            { text: "BotUsers statistics", callback_data: "userCount2" },
           ],
           [
             {
@@ -1667,12 +1671,12 @@ Contact us and our team will help you find the best solution for your business."
   }
   async function userLists2(msg) {
     const chatId = msg.chat.id;
-    const users = await User.find();
+    const users = await BotUsers.find();
     users.forEach(async (user) => {
       const uid = "`" + `${user.chatId}` + "`";
       bot.sendMessage(
         chatId,
-        `id: ${uid} \nUsername: ${user.name} \nPhone: ${user.phoneNumber}`,
+        `id: ${uid} \nBotUsersname: ${user.name} \nPhone: ${user.phoneNumber}`,
         { parse_mode: "Markdown" }
       );
     });
@@ -1680,20 +1684,20 @@ Contact us and our team will help you find the best solution for your business."
   async function userCount2(msg) {
     try {
       const chatId = msg.chat.id;
-      const users = await User.find();
+      const users = await BotUsers.find();
       const tasks = await Task.find();
       const userLength = users.length;
       const taskLength = tasks.length;
   
       // Botni bloklangan foydalanuvchilarning sonini hisoblash
-      const blockedUsersCount = users.filter(
+      const blockedBotUserssCount = users.filter(
         (user) => user.status === false
       ).length;
   
       // Foydalanuvchilar sonini bir marta chiqarish va bloklangan foydalanuvchilarni bildirish
       bot.sendMessage(
         chatId,
-        `Stats for @Grellaparat_zakas_bot: \nUsers: \nAll Users: ${userLength} \nThe bot is blocked: ${blockedUsersCount} \n \nMessages: \nAll messages: ${taskLength} \n\nThe counter of users who have blocked the bot is updated when a broadcast post is sent.`,
+        `Stats for @Grellaparat_zakas_bot: \nBotUserss: \nAll BotUserss: ${userLength} \nThe bot is blocked: ${blockedBotUserssCount} \n \nMessages: \nAll messages: ${taskLength} \n\nThe counter of users who have blocked the bot is updated when a broadcast post is sent.`,
         { parse_mode: "Markdown" }
       );
   
@@ -1709,7 +1713,7 @@ Contact us and our team will help you find the best solution for your business."
       const chatId = msg.chat.id;
       const adminId = "5803698389";
       // MongoDB da status true bo'lgan foydalanuvchilarni tanlash
-      const users = await User.find({ status: true });
+      const users = await BotUsers.find({ status: true });
   
       // Foydalanuvchidan xabar matnini so'rash
       await bot.sendMessage(adminId, `Enter message text: `, {
@@ -1822,8 +1826,8 @@ Contact us and our team will help you find the best solution for your business."
   async function adminListTasks2(msg) {
     const chatId = msg.chat.id;
   
-    const adminUserId = await User.findOne({ chatId });
-    if (!adminUserId || adminUserId.phoneNumber !== "+998330033953") {
+    const adminBotUsersId = await BotUsers.findOne({ chatId });
+    if (!adminBotUsersId || adminBotUsersId.phoneNumber !== "+998330033953") {
       bot.sendMessage(chatId, "You cannot make such a request!");
       return;
     }
@@ -2615,12 +2619,12 @@ Contact us and our team will help you find the best solution for your business."
   }
   async function userLists3(msg) {
     const chatId = msg.chat.id;
-    const users = await User.find();
+    const users = await BotUsers.find();
     users.forEach(async (user) => {
       const uid = "`" + `${user.chatId}` + "`";
       bot.sendMessage(
         chatId,
-        `id: ${uid} \nUsername: ${user.name} \nТелефон: ${user.phoneNumber}`,
+        `id: ${uid} \nBotUsersname: ${user.name} \nТелефон: ${user.phoneNumber}`,
         { parse_mode: "Markdown" }
       );
     });
@@ -2628,20 +2632,20 @@ Contact us and our team will help you find the best solution for your business."
   async function userCount3(msg) {
     try {
       const chatId = msg.chat.id;
-      const users = await User.find();
+      const users = await BotUsers.find();
       const tasks = await Task.find();
       const userLength = users.length;
       const taskLength = tasks.length;
   
       // Botni bloklangan foydalanuvchilarning sonini hisoblash
-      const blockedUsersCount = users.filter(
+      const blockedBotUserssCount = users.filter(
         (user) => user.status === false
       ).length;
   
       // Foydalanuvchilar sonini bir marta chiqarish va bloklangan foydalanuvchilarni bildirish
       bot.sendMessage(
         chatId,
-        `Статистика для @Grellaparat_zakas_bot: \nПользователи: \nВсе пользователи: ${userLength} \nБот заблокирован: ${blockedUsersCount} \n \nСообщения: \nВсе сообщения: ${taskLength} \n\nСчетчик пользователей, заблокировавших бота, обновляется при отправке широковещательного поста.`,
+        `Статистика для @Grellaparat_zakas_bot: \nПользователи: \nВсе пользователи: ${userLength} \nБот заблокирован: ${blockedBotUserssCount} \n \nСообщения: \nВсе сообщения: ${taskLength} \n\nСчетчик пользователей, заблокировавших бота, обновляется при отправке широковещательного поста.`,
         { parse_mode: "Markdown" }
       );
   
@@ -2657,7 +2661,7 @@ Contact us and our team will help you find the best solution for your business."
       const chatId = msg.chat.id;
       const adminId = "5803698389";
       // MongoDB da status true bo'lgan foydalanuvchilarni tanlash
-      const users = await User.find({ status: true });
+      const users = await BotUsers.find({ status: true });
   
       // Foydalanuvchidan xabar matnini so'rash
       await bot.sendMessage(adminId, `Введите текст сообщения: `, {
@@ -2770,8 +2774,8 @@ Contact us and our team will help you find the best solution for your business."
   async function adminListTasks3(msg) {
     const chatId = msg.chat.id;
   
-    const adminUserId = await User.findOne({ chatId });
-    if (!adminUserId || adminUserId.phoneNumber !== "+998330033953") {
+    const adminBotUsersId = await BotUsers.findOne({ chatId });
+    if (!adminBotUsersId || adminBotUsersId.phoneNumber !== "+998330033953") {
       bot.sendMessage(chatId, "Вы не можете сделать такой запрос!");
       return;
     }
@@ -2980,5 +2984,5 @@ Contact us and our team will help you find the best solution for your business."
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`2Server is running on port ${PORT}`);
+  console.log(`3 Server is running on port ${PORT}`);
 });
