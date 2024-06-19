@@ -16,7 +16,7 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("Error connecting to MongoDB:", err));
+  .catch((err) => console.log("Error connecting to MongoDB:", err));
 
 const token = process.env.TOKEN;
 const bot = new TelegramBot(token, { polling: true });
@@ -143,7 +143,7 @@ bot.on('callback_query', async(callbackQuery) => {
     //       startFunc(msg);
     //     }
       } catch (error) {
-        console.error(error);
+        console.log("error:", error);
       }
     });
   
@@ -291,7 +291,7 @@ bot.on('callback_query', async(callbackQuery) => {
           startFunc(msg);
         }
       } catch (error) {
-        console.error(error);
+        console.log(error);
       }
     }
     
@@ -753,7 +753,7 @@ Biz bilan bog'laning va bizning jamoamiz sizning biznesingiz uchun eng yaxshi ye
         // Tasklarni ham qaytarish mumkin
         return tasks;
       } catch (error) {
-        console.error(error);
+        console.log(error);
       }
     }
     
@@ -793,7 +793,7 @@ Biz bilan bog'laning va bizning jamoamiz sizning biznesingiz uchun eng yaxshi ye
             });
           } catch (error) {
             // Xatolikni tekshirish va uni qaytarish
-            // console.error('Xabar yuborishda xato yuz berdi:', error);
+            // console.log('Xabar yuborishda xato yuz berdi:', error);
           }
         }
       } catch (error) {
@@ -1248,7 +1248,7 @@ Biz bilan bog'laning va bizning jamoamiz sizning biznesingiz uchun eng yaxshi ye
         startFunc2(msg);
       }
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   }
   function phoneNumber2(msg) {
@@ -1703,7 +1703,7 @@ Contact us and our team will help you find the best solution for your business."
       // Tasklarni ham qaytarish mumkin
       return tasks;
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   }
   
@@ -1743,7 +1743,7 @@ Contact us and our team will help you find the best solution for your business."
           });
         } catch (error) {
           // Xatolikni tekshirish va uni qaytarish
-          // console.error('Xabar yuborishda xato yuz berdi:', error);
+          // console.log('Xabar yuborishda xato yuz berdi:', error);
         }
       }
     } catch (error) {
@@ -2196,7 +2196,7 @@ Contact us and our team will help you find the best solution for your business."
         startFunc3(msg);
       }
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   }
   function phoneNumber3(msg) {
@@ -2651,7 +2651,7 @@ Contact us and our team will help you find the best solution for your business."
       // Tasklarni ham qaytarish mumkin
       return tasks;
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   }
   
@@ -2691,7 +2691,7 @@ Contact us and our team will help you find the best solution for your business."
           });
         } catch (error) {
           // Xatolikni tekshirish va uni qaytarish
-          // console.error('Xabar yuborishda xato yuz berdi:', error);
+          // console.log('Xabar yuborishda xato yuz berdi:', error);
         }
       }
     } catch (error) {
@@ -2982,6 +2982,10 @@ Contact us and our team will help you find the best solution for your business."
       
 
 const PORT = process.env.PORT || 3000;
+
+app.get('/', (res, req) => {
+  res.send("Server bot")
+})
 app.listen(PORT, () => {
-  console.log(`3 Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
