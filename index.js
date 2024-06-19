@@ -36,20 +36,6 @@ bot.onText(/\/help/, async (msg) => {
 Agar sizda savol yoki takliflar bo'lsa, iltimos, bizga murojaat qiling. Biz sizning xizmatlarimizdan to'liq foydalanishingiz uchun hamma narsani qilamiz. Rahmat!"`)
 });
 
-function setLang(msg) {
-    const chatId = msg.chat.id;
-    bot.sendMessage(chatId, 'Choose your language:', {
-        reply_markup: {
-            inline_keyboard: [
-                [
-                    { text: '🇺🇿 Uzbek', callback_data: 'uz' },
-                    { text: '🇺🇸 English', callback_data: 'en' },
-                    { text: '🇷🇺 Русский', callback_data: 'ru' }
-                ]
-            ]
-        }
-    });
-}
 
 
 // Tilni o'rnatish funksiyasi
@@ -129,8 +115,7 @@ bot.on('callback_query', async(callbackQuery) => {
           bot.sendMessage(chatId, "Telefon raqamingiz muvaffaqiyatli saqlandi!", {
             remove_keyboard: true,
           });
-
-    setLang(msg) 
+           setLang(msg) 
         // Admin va obi-havo foydalanuvchilari uchun alohida funktsiyalarni chaqirish
     //     if (phoneNumber === "+998330033953") {
     //       await BotUsers.findOneAndUpdate(
@@ -146,6 +131,21 @@ bot.on('callback_query', async(callbackQuery) => {
         console.log("error:", error);
       }
     });
+    function setLang(msg) {
+      const chatId = msg.chat.id;
+      bot.sendMessage(chatId, 'Choose your language:', {
+          reply_markup: {
+              inline_keyboard: [
+                  [
+                      { text: '🇺🇿 Uzbek', callback_data: 'uz' },
+                      { text: '🇺🇸 English', callback_data: 'en' },
+                      { text: '🇷🇺 Русский', callback_data: 'ru' }
+                  ]
+              ]
+          }
+      });
+  }
+  
   
     function startFunc(msg) {
       const chatId = msg.chat.id;
@@ -2982,9 +2982,8 @@ Contact us and our team will help you find the best solution for your business."
       
 
 const PORT = process.env.PORT || 3000;
-
 app.get('/', (req, res) => {
-  res.send('hello world')
+  res.send('Run server')
 })
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
