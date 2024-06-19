@@ -2983,8 +2983,8 @@ Contact us and our team will help you find the best solution for your business."
 
 const PORT = process.env.PORT || 3000;
 
-app.get('/', (res, req) => {
-  res.send("Server bot")
+app.get('/', (req, res) => {
+  res.send('hello world')
 })
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
