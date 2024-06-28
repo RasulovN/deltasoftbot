@@ -746,7 +746,7 @@ Biz bilan bog'laning va bizning jamoamiz sizning biznesingiz uchun eng yaxshi ye
         // Foydalanuvchilar sonini bir marta chiqarish va bloklangan foydalanuvchilarni bildirish
         bot.sendMessage(
           chatId,
-          `@Grellaparat_zakas_bot uchun statistika: \nFoydalanuvchilar: \nBarcha foydalanuvchilar: ${userLength} \nBot bloklangan: ${blockedBotUserssCount} \n \nXabarlar: \nBarcha xabarlar: ${taskLength} \n\nBotni bloklagan foydalanuvchilarning hisoblagichi translyatsiya posti yuborilganda yangilanadi.`,
+          `"deltasoft_uzbot uchun statistika: \nFoydalanuvchilar: \nBarcha foydalanuvchilar: ${userLength} \nBot bloklangan: ${blockedBotUserssCount} \n \nXabarlar: \nBarcha xabarlar: ${taskLength} \n\nBotni bloklagan foydalanuvchilarning hisoblagichi translyatsiya posti yuborilganda yangilanadi.`,
           { parse_mode: "Markdown" }
         );
     
